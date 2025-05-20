@@ -1,0 +1,164 @@
+#include <iostream>
+#include <string>
+#include <limits>
+
+// Struct para representar uma carta de cidade
+struct CartaCidade {
+    std::string estado;
+    int codigo;
+    std::string nomeCidade;
+    int populacao;
+    double area;
+    double pib;
+    int pontosTuristicos;
+};
+
+// Enum para representar os atributos disponíveis para comparação
+enum Atributo {
+    POPULACAO,
+    AREA,
+    PIB,
+    PONTOS_TURISTICOS,
+    DENSIDADE_POPULACIONAL
+};
+
+// Função para limpar o buffer de entrada
+void limparBuffer() {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+// Função para cadastrar uma carta de cidade
+CartaCidade cadastrarCarta() {
+    CartaCidade carta;
+    
+    std::cout << "\n===== CADASTRO DE CARTA =====\n";
+    
+    std::cout << "Estado: ";
+    std::getline(std::cin, carta.estado);
+    
+    std::cout << "Código da carta: ";
+    std::cin >> carta.codigo;
+    limparBuffer();
+    
+    std::cout << "Nome da cidade: ";
+    std::getline(std::cin, carta.nomeCidade);
+    
+    std::cout << "População: ";
+    std::cin >> carta.populacao;
+    limparBuffer();
+    
+    std::cout << "Área (km²): ";
+    std::cin >> carta.area;
+    limparBuffer();
+    
+    std::cout << "PIB (em milhões R$): ";
+    std::cin >> carta.pib;
+    limparBuffer();
+    
+    std::cout << "Número de pontos turísticos: ";
+    std::cin >> carta.pontosTuristicos;
+    limparBuffer();
+    
+    return carta;
+}
+
+// Função para exibir os dados de uma carta
+void exibirCarta(const CartaCidade& carta) {
+    std::cout << "\n===== CARTA: " << carta.nomeCidade << " (" << carta.estado << ") =====\n";
+    std::cout << "Código: " << carta.codigo << "\n";
+    std::cout << "População: " << carta.populacao << " habitantes\n";
+    std::cout << "Área: " << carta.area << " km²\n";
+    std::cout << "PIB: " << carta.pib << " milhões R$\n";
+    std::cout << "Pontos Turísticos: " << carta.pontosTuristicos << "\n";
+    std::cout << "Densidade Populacional: " << (carta.populacao / carta.area) << " hab/km²\n";
+}
+
+// Função que compara duas cartas com base em um atributo específico
+// Retorna 1 se carta1 vence, 2 se carta2 vence, 0 se empate
+int compararCartas(const CartaCidade& carta1, const CartaCidade& carta2, Atributo atributo) {
+    switch (atributo) {
+        case POPULACAO:
+            if (carta1.populacao > carta2.populacao) return 1;
+            else if (carta1.populacao < carta2.populacao) return 2;
+            else return 0;
+            break;
+            
+        case AREA:
+            if (carta1.area > carta2.area) return 1;
+            else if (carta1.area < carta2.area) return 2;
+            else return 0;
+            break;
+            
+        case PIB:
+            if (carta1.pib > carta2.pib) return 1;
+            else if (carta1.pib < carta2.pib) return 2;
+            else return 0;
+            break;
+            
+        case PONTOS_TURISTICOS:
+            if (carta1.pontosTuristicos > carta2.pontosTuristicos) return 1;
+            else if (carta1.pontosTuristicos < carta2.pontosTuristicos) return 2;
+            else return 0;
+            break;
+            
+        case DENSIDADE_POPULACIONAL:
+            double densidade1 = carta1.populacao / carta1.area;
+            double densidade2 = carta2.populacao / carta2.area;
+            
+            // Para densidade, o menor valor vence (cidades menos densas)
+            if (densidade1 < densidade2) return 1;
+            else if (densidade1 > densidade2) return 2;
+            else return 0;
+            break;
+    }
+    
+    return 0; // Em caso de erro, retorna empate
+}
+
+// Função para exibir o resultado da comparação
+void exibirResultado(int resultado, const CartaCidade& carta1, const CartaCidade& carta2, Atributo atributo) {
+    std::string nomeAtributo;
+    
+    switch (atributo) {
+        case POPULACAO: nomeAtributo = "População"; break;
+        case AREA: nomeAtributo = "Área"; break;
+        case PIB: nomeAtributo = "PIB"; break;
+        case PONTOS_TURISTICOS: nomeAtributo = "Pontos Turísticos"; break;
+        case DENSIDADE_POPULACIONAL: nomeAtributo = "Densidade Populacional"; break;
+    }
+    
+    std::cout << "\n===== RESULTADO DA COMPARAÇÃO (" << nomeAtributo << ") =====\n";
+    
+    if (resultado == 0) {
+        std::cout << "EMPATE! Ambas as cartas têm o mesmo valor para este atributo.\n";
+    } else if (resultado == 1) {
+        std::cout << "A carta de " << carta1.nomeCidade << " VENCEU!\n";
+    } else {
+        std::cout << "A carta de " << carta2.nomeCidade << " VENCEU!\n";
+    }
+}
+
+int main() {
+    std::cout << "===== SUPER TRUNFO DAS CIDADES BRASILEIRAS =====\n";
+    
+    // Cadastro das duas cartas
+    std::cout << "\nVamos cadastrar a primeira carta:\n";
+    CartaCidade carta1 = cadastrarCarta();
+    exibirCarta(carta1);
+    
+    std::cout << "\nVamos cadastrar a segunda carta:\n";
+    CartaCidade carta2 = cadastrarCarta();
+    exibirCarta(carta2);
+    
+    // Atributo a ser comparado (fixo neste exemplo - poderia ser escolhido pelo usuário)
+    Atributo atributoComparacao = PIB;
+    
+    // Realizar a comparação
+    int resultado = compararCartas(carta1, carta2, atributoComparacao);
+    
+    // Exibir o resultado
+    exibirResultado(resultado, carta1, carta2, atributoComparacao);
+    
+    return 0;
+}
